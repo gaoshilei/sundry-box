@@ -19,6 +19,8 @@ allow-lan: false
 # Rule / Global / Direct (默认为 Rule 模式)
 mode: Rule
 
+ipv6: true
+
 # 设置输出日志的等级 (默认为 info)
 # info / warning / error / debug / silent
 log-level: info
@@ -51,27 +53,20 @@ experimental:
 #   'alpha.clash.dev': '::1'
 
 # dns:
-  # enable: true # set true to enable dns (default is false)
-  # ipv6: false # default is false
-  # listen: 0.0.0.0:53
-  # # default-nameserver: # resolve dns nameserver host, should fill pure IP
-  # #   - 114.114.114.114
-  # #   - 8.8.8.8
-  # enhanced-mode: redir-host # or fake-ip
-  # # fake-ip-range: 198.18.0.1/16 # if you don't know what it is, don't change it
-  # fake-ip-filter: # fake ip white domain list
-  #   - '*.lan'
-  #   - localhost.ptlogin2.qq.com
-  # nameserver:
-  #   - 114.114.114.114
-  #   - tls://dns.rubyfish.cn:853 # dns over tls
-  #   - https://1.1.1.1/dns-query # dns over https
-  # fallback: # concurrent request with nameserver, fallback used when GEOIP country isn't CN
-  #   - tcp://1.1.1.1
-  # fallback-filter:
-  #   geoip: true # default
-  #   ipcidr: # ips in these subnets will be considered polluted
-  #     - 240.0.0.0/4
+dns:
+ enable: true
+ ipv6: true
+ listen: 0.0.0.0:53
+ enhanced-mode: redir-host
+ nameserver:
+  - 8.8.8.8
+  - 119.29.29.29
+  - 223.5.5.5
+  - https://rubyfish.cn/dns-query
+ fallback:
+  - https://cloudflare-dns.com/dns-query
+  - tls://1.0.0.1:853
+  - https://dns.google/dns-query#
 
 proxies:
 # 支持的协议及加密算法示例请查阅 Clash 项目 README 以使用最新格式：https://github.com/Dreamacro/clash/blob/master/README.md
@@ -83,44 +78,60 @@ proxies:
 #   rc4-md5 chacha20-ietf xchacha20
 #   chacha20-ietf-poly1305 xchacha20-ietf-poly1305
 
-# # Shadowsocks
-# - name: "ss"
-#   type: ss
-#   server: server
-#   port: 443
-#   cipher: chacha20-ietf-poly1305
-#   password: "password"
-#   # udp: true
+# Shadowsocks
+  - name: "c5s1.jamjams3.net"
+    type: ss
+    server: c5s1.jamjams3.net
+    port: 12222
+    cipher: aes-256-gcm
+    password: "TpHnwbkyeoRp2Usd"
+    udp: true
 
-# # Shadowsocks(simple-obfs)
-# - name: "ss-obfs"
-#   type: ss
-#   server: server
-#   port: 443
-#   cipher: chacha20-ietf-poly1305
-#   password: "password"
-#   plugin: obfs
-#   plugin-opts:
-#       mode: tls
-#       host: example.com
+  - name: "c5s2.jamjams3.net"
+    type: ss
+    server: c5s2.jamjams3.net
+    port: 12222
+    cipher: aes-256-gcm
+    password: "TpHnwbkyeoRp2Usd"
+    udp: true
 
-# # Shadowsocks(v2ray-plugin)
-# - name: "ss-v2ray"
-#   type: ss
-#   server: server
-#   port: 443
-#   cipher: chacha20-ietf-poly1305
-#   password: "password"
-#   plugin: v2ray-plugin
-#   plugin-opts:
-#     mode: websocket # no QUIC now
-#     # tls: true # wss
-#     # skip-cert-verify: true
-#     # host: bing.com
-#     # path: "/"
-#     # mux: true
-#     # headers:
-#     #   custom: value
+# VMess
+  - name: "c5s3.jamjams3.net"
+    type: vmess
+    server: c5s3.jamjams3.net
+    port: 12222
+    uuid: a40fc3de-006b-4275-8e7f-69b0ffd3c40f
+    alterId: 0
+    cipher: auto
+    # udp: true
+    # tls: true
+    # skip-cert-verify: true
+    # tls-hostname: cloudflare.com #填写伪装域名
+    # network: ws
+    # ws-path: /path
+    # ws-headers: #这一行后面不要写东西
+    # Host: cloudflare.com # 填写伪装域名
+  - name: "c5s4.jamjams3.net"
+    type: vmess
+    server: c5s4.jamjams3.net
+    port: 12222
+    uuid: a40fc3de-006b-4275-8e7f-69b0ffd3c40f
+    alterId: 0
+    cipher: auto
+  - name: "c5s5.jamjams3.net"
+    type: vmess
+    server: c5s5.jamjams3.net
+    port: 12222
+    uuid: a40fc3de-006b-4275-8e7f-69b0ffd3c40f
+    alterId: 0
+    cipher: auto
+  - name: "c5s801.jamjams3.net"
+    type: vmess
+    server: c5s801.jamjams3.net
+    port: 12222
+    uuid: a40fc3de-006b-4275-8e7f-69b0ffd3c40f
+    alterId: 0
+    cipher: auto
 
 # Trojan
 # - name: "trojan"
@@ -142,16 +153,6 @@ proxies:
 # 「Proxy」是代理规则策略，它可以指定为某个节点或嵌套一个其他策略组，如：「url-test」（自动测试）、「Fallback」或「load-balance」（负载均衡）的策略组
 proxy-groups:
   - name: JustMySockets
-    type: select
-    proxies:
-      - "c5s1.jamjams3.net"
-      - "c5s2.jamjams3.net"
-      - "c5s3.jamjams3.net"
-      - "c5s4.jamjams3.net"
-      - "c5s5.jamjams3.net"
-      - "c5s801.jamjams3.net"
-  # url-test 通过指定的 URL 测试并选择延迟最低的节点
-  - name: "自动选择快速节点"
     type: url-test
     proxies:
       - "c5s1.jamjams3.net"
@@ -162,14 +163,58 @@ proxy-groups:
       - "c5s801.jamjams3.net"
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
+  - name: "LoadBalance"
+    type: load-balance
+    proxies:
+      - "c5s1.jamjams3.net"
+      - "c5s2.jamjams3.net"
+      - "c5s3.jamjams3.net"
+      - "c5s4.jamjams3.net"
+      - "c5s5.jamjams3.net"
+      - "c5s801.jamjams3.net"
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    # strategy: round-robin
+  - name: "chatGPT"
+    type: select
+    proxies:
+      - "c5s1.jamjams3.net"
+      - "c5s2.jamjams3.net"
+      - "c5s3.jamjams3.net"
+      - "c5s4.jamjams3.net"
+      - "c5s5.jamjams3.net"
+      - "c5s801.jamjams3.net"
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    strategy: consistent-hashing
 
 rule-providers:
+  custom_direct:
+    type: file
+    behavior: domain
+    path: ./ruleset/custom_direct.yaml
+
+  custom_proxy:
+    type: file
+    behavior: domain
+    path: ./ruleset/custom_proxy.yaml
+
+  chat_gpt:
+    type: file
+    behavior: domain
+    path: ./ruleset/chat_gpt.yaml
+
   reject:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
     path: ./ruleset/reject.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
+
 
   icloud:
     type: http
@@ -177,6 +222,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
     path: ./ruleset/icloud.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   apple:
     type: http
@@ -184,6 +233,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
     path: ./ruleset/apple.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   google:
     type: http
@@ -191,6 +244,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
     path: ./ruleset/google.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   proxy:
     type: http
@@ -198,6 +255,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
     path: ./ruleset/proxy.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   direct:
     type: http
@@ -205,6 +266,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
     path: ./ruleset/direct.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   private:
     type: http
@@ -212,6 +277,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
     path: ./ruleset/private.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   gfw:
     type: http
@@ -219,6 +288,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt"
     path: ./ruleset/gfw.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   greatfire:
     type: http
@@ -226,6 +299,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt"
     path: ./ruleset/greatfire.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   tld-not-cn:
     type: http
@@ -233,6 +310,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt"
     path: ./ruleset/tld-not-cn.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   telegramcidr:
     type: http
@@ -240,6 +321,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
     path: ./ruleset/telegramcidr.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   cncidr:
     type: http
@@ -247,6 +332,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
     path: ./ruleset/cncidr.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   lancidr:
     type: http
@@ -254,6 +343,10 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
     path: ./ruleset/lancidr.yaml
     interval: 86400
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
 
   applications:
     type: http
@@ -261,7 +354,11 @@ rule-providers:
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"
     path: ./ruleset/applications.yaml
     interval: 86400
-
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
+      
 # url-test 通过指定的 URL 测试并选择延迟最低的节点
 # - name: "自动选择快速节点"
 #   type: url-test
@@ -340,6 +437,9 @@ rule-providers:
 
 # 规则
 rules:
+  - RULE-SET,chat_gpt,chatGPT
+  - RULE-SET,custom_proxy,JustMySockets
+  - RULE-SET,custom_direct,DIRECT
   - RULE-SET,gfw,JustMySockets
   - RULE-SET,applications,DIRECT
   - DOMAIN,clash.razord.top,DIRECT
@@ -349,10 +449,12 @@ rules:
   - RULE-SET,icloud,DIRECT
   - RULE-SET,apple,DIRECT
   - RULE-SET,google,DIRECT
+  - RULE-SET,tld-not-cn,JustMySockets
   - RULE-SET,proxy,JustMySockets
   - RULE-SET,direct,DIRECT
   - RULE-SET,lancidr,DIRECT
   - RULE-SET,cncidr,DIRECT
+  - RULE-SET,greatfire,JustMySockets
   - RULE-SET,telegramcidr,JustMySockets
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
